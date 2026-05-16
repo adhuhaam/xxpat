@@ -46,9 +46,25 @@ export async function POST(req) {
         ?.textContent
         ?.trim();
 
-    const image =
-      document.querySelector('.kt-widget__media img')
-        ?.src;
+
+
+    
+    const imageElement =
+  document.querySelector('.kt-widget__media img');
+
+let image = '';
+
+if (imageElement) {
+
+  const src = imageElement.getAttribute('src');
+
+  image = `https://xpat.egov.mv${src}`;
+
+}
+
+
+
+    
 
     const links =
       [...document.querySelectorAll('.kt-widget__subhead a')];
