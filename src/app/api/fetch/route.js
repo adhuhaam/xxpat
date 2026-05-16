@@ -30,26 +30,29 @@ export async function POST(req) {
 
     /* IMAGE */
 
+    let image = '';
+
     const imageElement =
       document.querySelector('.kt-widget__media img');
-
-    let image = '';
 
     if (imageElement) {
 
       const src = imageElement.getAttribute('src');
 
-      image = `https://xpat.egov.mv${src}`;
+      if (src) {
+        image = `https://xpat.egov.mv${src}`;
+      }
 
     }
 
     /* NAME */
 
-    const name =
+    const rawName =
       document.querySelector('.kt-widget__username')
-        ?.textContent
-        ?.replace('✓', '')
-        ?.trim();
+        ?.textContent || '';
+
+    const name =
+      rawName.replace('✓', '').trim();
 
     if (!name) {
 
@@ -77,43 +80,58 @@ export async function POST(req) {
     const wp =
       infoLinks[3]?.textContent?.trim() || '';
 
-    /* DETAILS */
+    /* STATUS */
 
-    const detailText =
-      document.querySelector('.kt-widget__info')
-        ?.textContent || '';
+    const status =
+      document.querySelector('.btn-upper')
+        ?.textContent
+        ?.trim() || 'Unknown';
+
+    /* DETAILS TEXT */
+
+    const bodyText =
+      document.body.textContent || '';
 
     /* ISSUED DATE */
 
-    const issuedMatch =
-      html.match(/Issued On:\\s*<\\/b>\\s*([^<\\n]+)/i);
+    let issuedOn = '';
 
-    const issuedOn =
-      issuedMatch?.[1]?.trim() || '';
+    const issuedMatch =
+      bodyText.match(/Issued On:\s*([A-Za-z0-9-]+)/i);
+
+    if (issuedMatch) {
+      issuedOn = issuedMatch[1];
+    }
 
     /* VALID TILL */
 
-    const validMatch =
-      html.match(/Work Permit Valid till:\\s*<\\/b>[\\s\\S]*?>(.*?)</i);
+    let validTill = '';
 
-    const validTill =
-      validMatch?.[1]?.trim() || '';
+    const validMatch =
+      bodyText.match(/Work Permit Valid till:\s*([A-Za-z0-9-]+)/i);
+
+    if (validMatch) {
+      validTill = validMatch[1];
+    }
 
     /* WORK SITE */
 
-    const workSiteMatch =
-      html.match(/Work Site:\\s*<\\/b>[\\s\\S]*?<span.*?>(.*?)</i);
+    let workSite = '';
 
-    const workSite =
-      workSiteMatch?.[1]?.trim() || '';
+    const workSiteElement =
+      [...document.querySelectorAll('.kt-widget__desc')]
+        .find(el =>
+          el.textContent.includes('Work Site:')
+        );
 
-    /* STATUS */
+    if (workSiteElement) {
 
-    const statusElement =
-      document.querySelector('.btn-upper');
+      workSite =
+        workSiteElement.textContent
+          .replace('Work Site:', '')
+          .trim();
 
-    const status =
-      statusElement?.textContent?.trim() || 'Unknown';
+    }
 
     return Response.json({
 
