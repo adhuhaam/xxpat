@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import styles from './page.module.css';
 
 export default function Home() {
 
@@ -46,29 +47,29 @@ export default function Home() {
 
   return (
 
-    <main style={mainStyle}>
+    <main className={styles.main}>
 
-      <div style={containerStyle}>
+      <div className={styles.container}>
 
         {/* SEARCH */}
 
-        <div style={searchCard}>
+        <div className={styles.searchCard}>
 
-          <div style={headerStyle}>
-            <h1 style={titleStyle}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>
               Work Permit Verification
             </h1>
 
-            <span style={subTitleStyle}>
-              please provide below details to verify work permit
+            <span className={styles.subtitle}>
+              Please provide the details below to verify a work permit
             </span>
           </div>
 
-          <div style={searchRow}>
+          <div className={styles.searchRow}>
 
-            <div style={{flex:1}}>
+            <div className={styles.field}>
 
-              <label style={labelStyle}>
+              <label className={styles.label}>
                 Work Permit Number
               </label>
 
@@ -77,14 +78,14 @@ export default function Home() {
                 placeholder="WP00000000"
                 value={wp}
                 onChange={(e) => setWp(e.target.value)}
-                style={inputStyle}
+                className={styles.input}
               />
 
             </div>
 
-            <div style={{flex:1}}>
+            <div className={styles.field}>
 
-              <label style={labelStyle}>
+              <label className={styles.label}>
                 Name or Passport Number
               </label>
 
@@ -93,20 +94,21 @@ export default function Home() {
                 placeholder="Passport or Name"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                style={inputStyle}
+                className={styles.input}
               />
 
             </div>
 
-            <div>
+            <div className={styles.buttonWrap}>
 
-              <label style={labelStyle}>
-                Work Permit
+              <label className={styles.label}>
+                &nbsp;
               </label>
 
               <button
                 onClick={fetchEmployee}
-                style={buttonStyle}
+                className={styles.button}
+                disabled={loading}
               >
                 {loading ? 'Fetching...' : 'Fetch'}
               </button>
@@ -120,7 +122,7 @@ export default function Home() {
         {/* ERROR */}
 
         {error && (
-          <div style={errorStyle}>
+          <div className={styles.error}>
             {error}
           </div>
         )}
@@ -129,61 +131,61 @@ export default function Home() {
 
         {employee && (
 
-          <div style={resultCard}>
+          <div className={styles.resultCard}>
 
-            <div style={leftSection}>
+            <div className={styles.leftSection}>
 
               <img
                 src={employee.image}
                 alt="employee"
-                style={imageStyle}
+                className={styles.image}
               />
 
             </div>
 
-            <div style={middleSection}>
+            <div className={styles.middleSection}>
 
-              <div style={nameRow}>
+              <div className={styles.nameRow}>
 
-                <h2 style={employeeName}>
+                <h2 className={styles.employeeName}>
                   {employee.name}
                 </h2>
 
-                <span style={verifiedBadge}>
+                <span className={styles.verifiedBadge}>
                   ✓
                 </span>
 
               </div>
 
-              <div style={infoGrid}>
+              <div className={styles.infoGrid}>
 
-                <Info text={employee.employer} />
-                <Info text={employee.occupation} />
-                <Info text={employee.passport} />
-                <Info text={employee.wp} />
+                <span className={styles.infoPill}>{employee.employer}</span>
+                <span className={styles.infoPill}>{employee.occupation}</span>
+                <span className={styles.infoPill}>{employee.passport}</span>
+                <span className={styles.infoPill}>{employee.wp}</span>
 
               </div>
 
-              <div style={detailRow}>
+              <div className={styles.detailRow}>
                 <strong>Issued On:</strong> {employee.issuedOn}
               </div>
 
-              <div style={detailRow}>
-                <strong>Work Permit Valid till:</strong>{' '}
-                <span style={{color:'#14b8a6'}}>
+              <div className={styles.detailRow}>
+                <strong>Valid Till:</strong>{' '}
+                <span className={styles.validDate}>
                   {employee.validTill}
                 </span>
               </div>
 
-              <div style={detailRow}>
+              <div className={styles.detailRow}>
                 <strong>Work Site:</strong> {employee.workSite}
               </div>
 
             </div>
 
-            <div style={rightSection}>
+            <div className={styles.rightSection}>
 
-              <div style={statusBadge}>
+              <div className={styles.statusBadge}>
                 {employee.status}
               </div>
 
@@ -199,172 +201,3 @@ export default function Home() {
 
   );
 }
-
-function Info({ text }) {
-
-  return (
-    <div style={smallInfo}>
-      {text}
-    </div>
-  );
-}
-
-/* STYLES */
-
-const mainStyle = {
-  minHeight:'100vh',
-  background:'#f5f5f5',
-  padding:'40px',
-  fontFamily:'Arial'
-};
-
-const containerStyle = {
-  maxWidth:'1400px',
-  margin:'0 auto'
-};
-
-const searchCard = {
-  background:'#fff',
-  borderRadius:'12px',
-  padding:'30px',
-  boxShadow:'0 5px 20px rgba(0,0,0,0.08)',
-  marginBottom:'25px'
-};
-
-const headerStyle = {
-  marginBottom:'30px'
-};
-
-const titleStyle = {
-  fontSize:'36px',
-  marginBottom:'8px',
-  color:'#444'
-};
-
-const subTitleStyle = {
-  color:'#888',
-  fontSize:'16px'
-};
-
-const searchRow = {
-  display:'flex',
-  gap:'20px',
-  alignItems:'end',
-  flexWrap:'wrap'
-};
-
-const labelStyle = {
-  display:'block',
-  marginBottom:'10px',
-  fontWeight:'600',
-  color:'#555'
-};
-
-const inputStyle = {
-  width:'100%',
-  padding:'16px',
-  border:'1px solid #ddd',
-  borderRadius:'10px',
-  fontSize:'16px',
-  minWidth:'300px'
-};
-
-const buttonStyle = {
-  padding:'16px 40px',
-  background:'#3b82f6',
-  color:'#fff',
-  border:'none',
-  borderRadius:'10px',
-  fontSize:'16px',
-  cursor:'pointer'
-};
-
-const errorStyle = {
-  background:'#fee2e2',
-  color:'#dc2626',
-  padding:'18px',
-  borderRadius:'12px',
-  marginBottom:'20px'
-};
-
-const resultCard = {
-  background:'#fff',
-  borderRadius:'14px',
-  padding:'35px',
-  display:'flex',
-  gap:'30px',
-  alignItems:'flex-start',
-  boxShadow:'0 5px 20px rgba(0,0,0,0.08)',
-  flexWrap:'wrap'
-};
-
-const leftSection = {
-  flexShrink:0
-};
-
-const imageStyle = {
-  width:'160px',
-  borderRadius:'12px',
-  objectFit:'cover'
-};
-
-const middleSection = {
-  flex:1
-};
-
-const rightSection = {
-  display:'flex',
-  alignItems:'start'
-};
-
-const employeeName = {
-  fontSize:'42px',
-  fontWeight:'700',
-  color:'#444'
-};
-
-const verifiedBadge = {
-  width:'34px',
-  height:'34px',
-  borderRadius:'50%',
-  background:'#14b8a6',
-  color:'#fff',
-  display:'flex',
-  alignItems:'center',
-  justifyContent:'center',
-  fontWeight:'bold'
-};
-
-const nameRow = {
-  display:'flex',
-  alignItems:'center',
-  gap:'12px',
-  marginBottom:'20px'
-};
-
-const infoGrid = {
-  display:'flex',
-  flexWrap:'wrap',
-  gap:'20px',
-  marginBottom:'20px',
-  color:'#666'
-};
-
-const smallInfo = {
-  fontSize:'20px'
-};
-
-const detailRow = {
-  marginBottom:'12px',
-  fontSize:'20px',
-  color:'#555'
-};
-
-const statusBadge = {
-  background:'#dbeafe',
-  color:'#2563eb',
-  padding:'14px 22px',
-  borderRadius:'10px',
-  fontWeight:'700',
-  fontSize:'16px'
-};
