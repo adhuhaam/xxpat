@@ -1,12 +1,17 @@
 export const metadata = {
   title: 'XPAT Employee Fetch',
-  description: 'Employee verification app'
+  description: 'Employee verification app',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body style={{ margin: 0, padding: 0 }}>{children}</body>
     </html>
   )
 }
