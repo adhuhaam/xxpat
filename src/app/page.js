@@ -4,7 +4,6 @@ import { useState, useRef, useCallback } from 'react';
 import styles from './page.module.css';
 
 export default function Home() {
-
   const [wp, setWp] = useState('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,22 +13,17 @@ export default function Home() {
   const [scanProgress, setScanProgress] = useState(0);
   const [scanned, setScanned] = useState(false);
 
-  const fileInputRef = useRef(null);
-  const cameraInputRef = useRef(null);
+  const fileRef = useRef(null);
+  const cameraRef = useRef(null);
 
-  async function verify(wpVal, searchVal) {
-    const w = (wpVal || wp).trim();
-    const s = (searchVal || search).trim();
-
-    if (!w || !s) {
-      setError('Please fill in both fields');
-      return;
-    }
+  async function verify(w, s) {
+    w = (w || wp).trim();
+    s = (s || search).trim();
+    if (!w || !s) { setError('Please fill in both fields'); return; }
 
     setLoading(true);
     setError('');
     setEmployee(null);
-
     try {
       const res = await fetch('/api/fetch', {
         method: 'POST',
@@ -37,133 +31,85 @@ export default function Home() {
         body: JSON.stringify({ wp: w, search: s })
       });
       const data = await res.json();
-
-      if (!data.success) {
-        setError(data.message);
-      } else {
-        setEmployee(data.employee);
-      }
+      if (!data.success) setError(data.message);
+      else setEmployee(data.employee);
     } catch {
       setError('Connection failed. Please try again.');
     }
-
     setLoading(false);
   }
 
-  const handleImageSelected = useCallback(async (file) => {
+  const handleImage = useCallback(async (file) => {
     if (!file) return;
-
-    setError('');
-    setEmployee(null);
-    setScanning(true);
-    setScanProgress(0);
-    setScanned(false);
+    setError(''); setEmployee(null);
+    setScanning(true); setScanProgress(0); setScanned(false);
 
     try {
       const Tesseract = await import('tesseract.js');
-
       const result = await Tesseract.recognize(file, 'eng', {
-        logger: (info) => {
-          if (info.status === 'recognizing text') {
-            setScanProgress(Math.round(info.progress * 100));
-          }
-        }
+        logger: (i) => { if (i.status === 'recognizing text') setScanProgress(Math.round(i.progress * 100)); }
       });
 
       const text = result.data.text;
+      const wpM = text.match(/WP\s*[-:]?\s*(\d{5,})/i) || text.match(/(WP\d{5,})/i);
+      let eWp = '';
+      if (wpM) eWp = wpM[1].startsWith('WP') ? wpM[1] : 'WP' + wpM[1];
 
-      const wpMatch = text.match(/WP\s*[-:]?\s*(\d{5,})/i)
-        || text.match(/(WP\d{5,})/i);
-      let extractedWp = '';
-      if (wpMatch) {
-        extractedWp = wpMatch[1].startsWith('WP') ? wpMatch[1] : 'WP' + wpMatch[1];
-      }
+      const ppM = text.match(/(?:passport|pp)\s*(?:no\.?|number|#)?\s*[-:]?\s*([A-Z]\d{6,9})/i) || text.match(/\b([A-Z]\d{6,9})\b/);
+      const ePp = ppM ? ppM[1] : '';
+      let eName = '';
+      if (!ePp) { const nm = text.match(/(?:name|employee)\s*[-:]?\s*([A-Za-z\s]{3,40})/i); if (nm) eName = nm[1].trim(); }
 
-      const passportMatch = text.match(/(?:passport|pp)\s*(?:no\.?|number|#)?\s*[-:]?\s*([A-Z]\d{6,9})/i)
-        || text.match(/\b([A-Z]\d{6,9})\b/);
-      const extractedPassport = passportMatch ? passportMatch[1] : '';
+      if (eWp) setWp(eWp);
+      const sv = ePp || eName;
+      if (sv) setSearch(sv);
 
-      let extractedName = '';
-      if (!extractedPassport) {
-        const nameMatch = text.match(/(?:name|employee)\s*[-:]?\s*([A-Za-z\s]{3,40})/i);
-        if (nameMatch) extractedName = nameMatch[1].trim();
-      }
+      if (eWp && sv) { setScanning(false); setScanProgress(0); setScanned(true); await verify(eWp, sv); return; }
+      if (!eWp && !sv) setError('Couldn\'t read the document. Enter details manually.');
+      else if (!eWp) setError('Couldn\'t find a permit number. Enter it manually.');
+      else setError('Couldn\'t find a name or passport. Enter it manually.');
+    } catch { setError('Scan failed. Please try again.'); }
 
-      if (extractedWp) setWp(extractedWp);
-      const searchVal = extractedPassport || extractedName;
-      if (searchVal) setSearch(searchVal);
-
-      if (extractedWp && searchVal) {
-        setScanning(false);
-        setScanProgress(0);
-        setScanned(true);
-        await verify(extractedWp, searchVal);
-        return;
-      }
-
-      if (!extractedWp && !searchVal) {
-        setError('Couldn\'t read the document. Please enter details manually.');
-      } else if (!extractedWp) {
-        setError('Couldn\'t find a work permit number. Please enter it manually.');
-      } else {
-        setError('Couldn\'t find a name or passport. Please enter it manually.');
-      }
-    } catch {
-      setError('Scan failed. Please try again or enter details manually.');
-    }
-
-    setScanning(false);
-    setScanProgress(0);
-    setScanned(true);
+    setScanning(false); setScanProgress(0); setScanned(true);
   }, []);
 
-  function handleFileChange(e) {
-    const file = e.target.files?.[0];
-    if (file) handleImageSelected(file);
-    e.target.value = '';
-  }
+  function onFile(e) { const f = e.target.files?.[0]; if (f) handleImage(f); e.target.value = ''; }
 
-  const statusClass = employee?.isValid === true
-    ? styles.statusBarValid
-    : employee?.isValid === false
-      ? styles.statusBarExpired
-      : styles.statusBarUnknown;
+  const statusCls = employee?.isValid === true ? styles.statusValid
+    : employee?.isValid === false ? styles.statusExpired : styles.statusOther;
 
-  const validClass = employee?.isValid === true
-    ? styles.detailValueValid
-    : employee?.isValid === false
-      ? styles.detailValueExpired
-      : styles.detailValue;
+  const validCls = employee?.isValid === true ? styles.rowGreen
+    : employee?.isValid === false ? styles.rowRed : styles.rowValue;
 
   return (
     <div className={styles.app}>
 
       <nav className={styles.navBar}>
-        <div className={styles.navTitle}>Verify</div>
-        <div className={styles.navSubtitle}>Work Permit Verification</div>
+        <img src="/icon-192.png" alt="" className={styles.navLogo} />
+        <div className={styles.navText}>
+          <span className={styles.navTitle}>XPAT Verify</span>
+          <span className={styles.navSub}>Work Permit Verification</span>
+        </div>
       </nav>
 
       <main className={styles.content}>
 
-        {/* Scan + Form Card */}
-        <div className={styles.sectionLabel}>Lookup</div>
-        <div className={styles.card}>
+        <div className={styles.sectionLabel}>Scan or Enter</div>
 
+        <div className={styles.card}>
           <div className={styles.scanRow}>
-            <button className={styles.scanBtn} onClick={() => cameraInputRef.current?.click()}>
-              <span className={styles.scanIcon}>📷</span>
-              Camera
+            <button className={styles.scanBtn} onClick={() => cameraRef.current?.click()}>
+              <span className={styles.scanIcon}>📷</span> Camera
             </button>
-            <button className={styles.scanBtn} onClick={() => fileInputRef.current?.click()}>
-              <span className={styles.scanIcon}>🖼️</span>
-              Photo Library
+            <button className={styles.scanBtn} onClick={() => fileRef.current?.click()}>
+              <span className={styles.scanIcon}>🖼️</span> Photo Library
             </button>
           </div>
 
-          <input ref={cameraInputRef} type="file" accept="image/*" capture="environment"
-            onChange={handleFileChange} className={styles.scanHidden} />
-          <input ref={fileInputRef} type="file" accept="image/*"
-            onChange={handleFileChange} className={styles.scanHidden} />
+          <input ref={cameraRef} type="file" accept="image/*" capture="environment"
+            onChange={onFile} className={styles.scanHidden} />
+          <input ref={fileRef} type="file" accept="image/*"
+            onChange={onFile} className={styles.scanHidden} />
 
           {scanned && (
             <div className={styles.scannedBadge}>
@@ -171,122 +117,102 @@ export default function Home() {
             </div>
           )}
 
-          <div className={styles.formRow}>
-            <span className={styles.formLabel}>Permit</span>
-            <input
-              type="text"
-              placeholder="WP00000000"
-              value={wp}
+          <div className={styles.divider} />
+
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Work Permit Number</span>
+            <input type="text" placeholder="WP00000000" value={wp}
               onChange={(e) => setWp(e.target.value)}
-              className={styles.formInput}
-              autoComplete="off"
-            />
+              className={styles.fieldInput} autoComplete="off" />
           </div>
 
-          <div className={styles.formRow}>
-            <span className={styles.formLabel}>Name</span>
-            <input
-              type="text"
-              placeholder="Name or Passport"
-              value={search}
+          <div className={styles.divider} />
+
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Name or Passport</span>
+            <input type="text" placeholder="Ahmed / A1234567" value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className={styles.formInput}
-              autoComplete="off"
-            />
+              className={styles.fieldInput} autoComplete="off" />
           </div>
 
+          <button onClick={() => verify()} className={styles.verifyBtn} disabled={loading}>
+            {loading && <span className={styles.spinner} />}
+            {loading ? 'Verifying…' : 'Verify Permit'}
+          </button>
         </div>
 
-        <button
-          onClick={() => verify()}
-          className={styles.button}
-          disabled={loading}
-        >
-          {loading && <span className={styles.spinner} />}
-          {loading ? 'Verifying…' : 'Verify'}
-        </button>
-
-        {/* Error */}
         {error && (
           <div className={styles.error}>
-            <span className={styles.errorIcon}>⚠️</span>
-            {error}
+            <span className={styles.errorDot}>!</span>
+            <span className={styles.errorMsg}>{error}</span>
           </div>
         )}
 
-        {/* Result */}
         {employee && (
           <>
             <div className={styles.sectionLabel}>Result</div>
-            <div className={styles.resultCard}>
+            <div className={styles.result}>
 
-              <div className={`${styles.statusBar} ${statusClass}`}>
-                <span className={styles.statusText}>{employee.status}</span>
-                <span className={styles.statusDot} />
-              </div>
-
-              <div className={styles.profileHeader}>
-                <img src={employee.image} alt={employee.name} className={styles.profileImage} />
-                <div className={styles.profileInfo}>
-                  <h2 className={styles.profileName}>
-                    {employee.name}
-                    <span className={styles.verifiedIcon}>✓</span>
-                  </h2>
-                  <div className={styles.profileOccupation}>{employee.occupation}</div>
-                  <div className={styles.profileEmployer}>{employee.employer}</div>
+              <div className={styles.profile}>
+                <img src={employee.image} alt={employee.name} className={styles.profileImg} />
+                <div className={styles.profileBody}>
+                  <div className={styles.profileTop}>
+                    <h2 className={styles.profileName}>
+                      {employee.name}<span className={styles.verified}>✓</span>
+                    </h2>
+                    <span className={`${styles.statusPill} ${statusCls}`}>
+                      <span className={styles.statusDot} />
+                      {employee.status}
+                    </span>
+                  </div>
+                  <div className={styles.profileRole}>{employee.occupation}</div>
+                  <div className={styles.profileCompany}>{employee.employer}</div>
                 </div>
               </div>
 
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Passport</span>
-                <span className={styles.detailValue}>{employee.passport}</span>
-              </div>
-
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Work Permit</span>
-                <span className={styles.detailValue}>{employee.wp}</span>
-              </div>
-
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Issued</span>
-                <span className={styles.detailValue}>{employee.issuedOn}</span>
-              </div>
-
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Valid Till</span>
-                <span className={validClass}>{employee.validTill}</span>
-              </div>
-
-              <div className={styles.detailRow}>
-                <span className={styles.detailLabel}>Work Site</span>
-                <span className={styles.detailValue}>
-                  {employee.workSite}
-                  {employee.workSiteCode && (
-                    <span className={styles.siteCode}>{employee.workSiteCode}</span>
-                  )}
-                </span>
+              <div className={styles.details}>
+                <div className={styles.row}>
+                  <span className={styles.rowLabel}>Passport</span>
+                  <span className={styles.rowValue}>{employee.passport}</span>
+                </div>
+                <div className={styles.row}>
+                  <span className={styles.rowLabel}>Work Permit</span>
+                  <span className={styles.rowValue}>{employee.wp}</span>
+                </div>
+                <div className={styles.row}>
+                  <span className={styles.rowLabel}>Issued</span>
+                  <span className={styles.rowValue}>{employee.issuedOn}</span>
+                </div>
+                <div className={styles.row}>
+                  <span className={styles.rowLabel}>Valid Till</span>
+                  <span className={validCls}>{employee.validTill}</span>
+                </div>
+                <div className={styles.row}>
+                  <span className={styles.rowLabel}>Work Site</span>
+                  <span className={styles.rowValue}>
+                    {employee.workSite}
+                    {employee.workSiteCode && <span className={styles.siteCode}>{employee.workSiteCode}</span>}
+                  </span>
+                </div>
               </div>
 
             </div>
           </>
         )}
-
       </main>
 
-      {/* OCR Overlay */}
       {scanning && (
         <div className={styles.ocrOverlay}>
           <div className={styles.ocrModal}>
             <div className={styles.ocrSpinner} />
             <div className={styles.ocrTitle}>Scanning</div>
-            <div className={styles.ocrSubtitle}>Reading document…</div>
-            <div className={styles.ocrProgress}>
-              <div className={styles.ocrProgressBar} style={{ width: `${scanProgress}%` }} />
+            <div className={styles.ocrSub}>Reading document…</div>
+            <div className={styles.ocrBar}>
+              <div className={styles.ocrFill} style={{ width: `${scanProgress}%` }} />
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }
