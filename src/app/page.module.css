@@ -450,36 +450,19 @@
   transition: width 0.3s ease;
 }
 
-/* Image preview */
-.previewWrap {
+/* Scanned confirmation badge */
+.scannedBadge {
   margin-top: 14px;
-  position: relative;
-}
-
-.previewImage {
-  width: 100%;
-  max-height: 200px;
-  object-fit: cover;
-  border-radius: 12px;
-  border: 2px solid #e5e7eb;
-}
-
-.previewClear {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  border: none;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  -webkit-tap-highlight-color: transparent;
+  gap: 8px;
+  background: #f0fdf4;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #bbf7d0;
+  font-size: 13px;
+  color: #15803d;
+  font-weight: 500;
 }
 
 /* Divider */

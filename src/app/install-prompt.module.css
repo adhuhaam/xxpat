@@ -1,0 +1,104 @@
+.overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 300;
+  padding: 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.banner {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.bannerTop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.bannerIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bannerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.bannerTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 3px;
+}
+
+.bannerDesc {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.bannerActions {
+  display: flex;
+  gap: 10px;
+}
+
+.dismissBtn {
+  flex: 1;
+  padding: 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  color: #6b7280;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+
+.dismissBtn:active {
+  background: #f3f4f6;
+}
+
+.installBtn {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s;
+}
+
+.installBtn:active {
+  transform: scale(0.98);
+}
