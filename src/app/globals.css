@@ -15,8 +15,8 @@ body {
     BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f2f2f7;
-  color: #000;
+  color: #fff;
+  background: #000;
   overflow-x: hidden;
 }
 

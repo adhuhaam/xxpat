@@ -1,101 +1,121 @@
-/* ===== iOS-NATIVE APP SHELL ===== */
+/* ===== iOS DARK MODE APP ===== */
 .app {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: #f2f2f7;
+  background: #000;
 }
 
-/* iOS-style large title nav bar */
+/* ===== iOS DARK CARD ===== */
+.glass {
+  background: #1c1c1e;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== NAV BAR ===== */
 .navBar {
-  background: rgba(248, 248, 250, 0.85);
+  background: rgba(28, 28, 30, 0.85);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  padding: 12px 20px 14px;
-  padding-top: max(12px, env(safe-area-inset-top));
+  border-radius: 0;
+  padding: 14px 20px;
+  padding-top: max(14px, env(safe-area-inset-top));
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+}
+
+.navLogo {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+
+.navText {
+  display: flex;
+  flex-direction: column;
 }
 
 .navTitle {
-  font-size: 34px;
+  font-size: 17px;
   font-weight: 700;
-  color: #000;
-  letter-spacing: 0.4px;
-  line-height: 1.1;
+  color: #fff;
+  letter-spacing: -0.2px;
 }
 
-.navSubtitle {
-  font-size: 13px;
-  color: #8e8e93;
-  margin-top: 2px;
+.navSub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
 }
 
-/* Scrollable content */
+/* ===== CONTENT ===== */
 .content {
   flex: 1;
-  padding: 16px;
+  padding: 20px 16px;
   padding-bottom: max(24px, env(safe-area-inset-bottom));
-  max-width: 600px;
+  max-width: 560px;
   width: 100%;
   margin: 0 auto;
 }
 
-/* iOS section label */
+/* Section labels */
 .sectionLabel {
   font-size: 13px;
   font-weight: 600;
-  color: #6e6e73;
+  color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   padding: 0 4px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-/* ===== iOS GROUPED CARD ===== */
+/* ===== SEARCH CARD ===== */
 .card {
-  background: #fff;
-  border-radius: 12px;
+  composes: glass;
+  border-radius: 20px;
   margin-bottom: 20px;
-  overflow: hidden;
 }
 
-/* ===== SCAN SECTION ===== */
+/* Scan row */
 .scanRow {
   display: flex;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+  gap: 8px;
+  padding: 12px;
 }
 
 .scanBtn {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 18px 12px;
-  background: none;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 12px;
+  background: #2c2c2e;
   border: none;
+  border-radius: 10px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s;
-  color: #007aff;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.scanBtn:first-child {
-  border-right: 0.5px solid rgba(0, 0, 0, 0.08);
+  color: #0a84ff;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.15s, transform 0.1s;
 }
 
 .scanBtn:active {
-  background: rgba(0, 0, 0, 0.04);
+  transform: scale(0.96);
+  background: #3a3a3c;
 }
 
 .scanIcon {
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .scanHidden {
@@ -106,168 +126,183 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 16px;
+  padding: 10px 16px;
   font-size: 13px;
-  color: #34c759;
-  font-weight: 500;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+  color: #30d158;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ===== FORM ROWS (iOS settings style) ===== */
-.formRow {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-  gap: 12px;
+/* Divider */
+.divider {
+  height: 0.5px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 16px;
 }
 
-.formRow:last-child {
-  border-bottom: none;
+/* Form fields */
+.field {
+  padding: 14px 16px;
 }
 
-.formLabel {
-  font-size: 15px;
-  color: #000;
-  white-space: nowrap;
-  width: 58px;
-  flex-shrink: 0;
-  font-weight: 400;
+.fieldLabel {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+  display: block;
 }
 
-.formInput {
-  flex: 1;
+.fieldInput {
+  display: block;
+  width: 100%;
   border: none;
   outline: none;
-  font-size: 15px;
-  color: #000;
+  font-size: 17px;
+  color: #fff;
   background: none;
-  text-align: right;
   padding: 0;
-  min-width: 0;
   -webkit-appearance: none;
+  font-weight: 400;
+  letter-spacing: -0.2px;
 }
 
-.formInput::placeholder {
-  color: #c7c7cc;
+.fieldInput::placeholder {
+  color: rgba(255, 255, 255, 0.25);
 }
 
-/* iOS primary button */
-.button {
-  display: block;
-  width: calc(100% - 32px);
-  margin: 16px auto;
+/* Verify button */
+.verifyBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 24px);
+  margin: 4px 12px 12px;
   padding: 15px;
-  background: #007aff;
+  background: #0a84ff;
   color: #fff;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 17px;
   font-weight: 600;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: opacity 0.15s;
+  transition: transform 0.1s, opacity 0.15s;
   letter-spacing: -0.2px;
 }
 
-.button:active {
-  opacity: 0.7;
+.verifyBtn:active {
+  transform: scale(0.97);
 }
 
-.button:disabled {
-  opacity: 0.5;
+.verifyBtn:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
 }
 
 .spinner {
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.25);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
-  vertical-align: middle;
-  margin-right: 8px;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* ===== ERROR (iOS alert style) ===== */
+/* ===== ERROR ===== */
 .error {
-  background: #fff;
+  composes: glass;
   border-radius: 12px;
   padding: 14px 16px;
   margin-bottom: 20px;
-  font-size: 15px;
-  color: #ff3b30;
-  font-weight: 400;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.errorIcon {
-  font-size: 18px;
+.errorDot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 59, 48, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
   flex-shrink: 0;
 }
 
-/* ===== RESULT CARD ===== */
-.resultCard {
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  animation: fadeUp 0.35s ease;
+.errorMsg {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  flex: 1;
 }
 
-@keyframes fadeUp {
+/* ===== RESULT CARD ===== */
+.result {
+  composes: glass;
+  border-radius: 20px;
+  animation: cardPop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cardPop {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(24px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-/* Status pill at top */
-.statusBar {
-  padding: 8px 16px;
-  display: flex;
+/* Status pill */
+.statusPill {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.statusBarValid {
-  background: #34c759;
-}
-
-.statusBarExpired {
-  background: #ff3b30;
-}
-
-.statusBarUnknown {
-  background: #007aff;
-}
-
-.statusText {
-  color: #fff;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
+}
+
+.statusValid {
+  background: rgba(48, 209, 88, 0.2);
+  color: #30d158;
+  border: 1px solid rgba(48, 209, 88, 0.3);
+}
+
+.statusExpired {
+  background: rgba(255, 69, 58, 0.2);
+  color: #ff453a;
+  border: 1px solid rgba(255, 69, 58, 0.3);
+}
+
+.statusOther {
+  background: rgba(10, 132, 255, 0.2);
+  color: #0a84ff;
+  border: 1px solid rgba(10, 132, 255, 0.3);
 }
 
 .statusDot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  animation: blink 2s ease-in-out infinite;
+  background: currentColor;
+  animation: blink 1.5s ease-in-out infinite;
 }
 
 @keyframes blink {
@@ -275,176 +310,198 @@
   50% { opacity: 1; }
 }
 
-/* Profile header */
-.profileHeader {
-  padding: 20px 16px 16px;
+/* Profile */
+.profile {
+  padding: 20px 16px;
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
 }
 
-.profileImage {
-  width: 72px;
-  height: 90px;
-  border-radius: 10px;
+.profileImg {
+  width: 76px;
+  height: 95px;
+  border-radius: 14px;
   object-fit: cover;
   flex-shrink: 0;
-  background: #f2f2f7;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #2c2c2e;
 }
 
-.profileInfo {
+.profileBody {
   flex: 1;
   min-width: 0;
 }
 
+.profileTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
 .profileName {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  color: #000;
-  margin: 0 0 2px 0;
+  color: #fff;
+  margin: 0;
   line-height: 1.2;
   word-break: break-word;
+  letter-spacing: -0.3px;
 }
 
-.verifiedIcon {
-  color: #34c759;
+.verified {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #30d158;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.profileRole {
   font-size: 14px;
-  margin-left: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
 }
 
-.profileOccupation {
+.profileCompany {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 13px;
-  color: #8e8e93;
-  margin-bottom: 4px;
+  color: #5ac8fa;
+  font-weight: 600;
 }
 
-.profileEmployer {
-  font-size: 13px;
-  color: #007aff;
-  font-weight: 500;
+/* Detail rows */
+.details {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* iOS-style detail list rows */
-.detailRow {
+.row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 13px 16px;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-  min-height: 44px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  min-height: 48px;
 }
 
-.detailRow:last-child {
+.row:last-child {
   border-bottom: none;
 }
 
-.detailLabel {
+.rowLabel {
   font-size: 15px;
-  color: #000;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
 }
 
-.detailValue {
+.rowValue {
   font-size: 15px;
-  color: #8e8e93;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
   text-align: right;
-  max-width: 55%;
+  max-width: 58%;
   word-break: break-word;
 }
 
-.detailValueValid {
-  composes: detailValue;
-  color: #34c759;
+.rowGreen {
+  composes: rowValue;
+  color: #30d158;
   font-weight: 600;
 }
 
-.detailValueExpired {
-  composes: detailValue;
-  color: #ff3b30;
+.rowRed {
+  composes: rowValue;
+  color: #ff453a;
   font-weight: 600;
 }
 
-/* Work site code */
 .siteCode {
-  font-size: 12px;
-  color: #8e8e93;
-  background: #f2f2f7;
-  padding: 2px 8px;
+  display: inline-block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 7px;
   border-radius: 4px;
   margin-left: 6px;
-  font-weight: 500;
+  font-weight: 600;
+  vertical-align: middle;
 }
 
 /* ===== OCR OVERLAY ===== */
 .ocrOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 200;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .ocrModal {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 14px;
-  padding: 28px 24px;
+  background: #2c2c2e;
+  border-radius: 16px;
+  padding: 30px 28px;
   text-align: center;
   max-width: 270px;
   width: 85%;
 }
 
 .ocrSpinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid #e5e5ea;
-  border-top-color: #007aff;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #3a3a3c;
+  border-top-color: #0a84ff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
-  margin: 0 auto 14px;
+  margin: 0 auto 16px;
 }
 
 .ocrTitle {
   font-size: 17px;
   font-weight: 600;
-  color: #000;
+  color: #fff;
   margin-bottom: 4px;
 }
 
-.ocrSubtitle {
+.ocrSub {
   font-size: 13px;
-  color: #8e8e93;
+  color: rgba(255, 255, 255, 0.45);
 }
 
-.ocrProgress {
-  margin-top: 14px;
+.ocrBar {
+  margin-top: 16px;
   width: 100%;
   height: 4px;
-  background: #e5e5ea;
+  background: #3a3a3c;
   border-radius: 2px;
   overflow: hidden;
 }
 
-.ocrProgressBar {
+.ocrFill {
   height: 100%;
-  background: #007aff;
+  background: linear-gradient(90deg, #0a84ff, #5ac8fa);
   border-radius: 2px;
   transition: width 0.3s ease;
 }
 
 /* ===== DESKTOP ===== */
 @media (min-width: 768px) {
-  .navBar {
-    text-align: center;
-    padding: 16px 32px 18px;
-  }
-
   .content {
-    padding: 24px;
+    padding: 28px 24px;
   }
 }
