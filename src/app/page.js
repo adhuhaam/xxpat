@@ -13,7 +13,7 @@ export default function Home() {
 
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
-  const [preview, setPreview] = useState(null);
+  const [scanned, setScanned] = useState(false);
 
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
@@ -55,12 +55,11 @@ export default function Home() {
   const handleImageSelected = useCallback(async (file) => {
     if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
-    setPreview(imageUrl);
     setError('');
     setEmployee(null);
     setScanning(true);
     setScanProgress(0);
+    setScanned(false);
 
     try {
       const Tesseract = await import('tesseract.js');
@@ -122,6 +121,7 @@ export default function Home() {
 
     setScanning(false);
     setScanProgress(0);
+    setScanned(true);
   }, []);
 
   async function fetchEmployeeDirect(wpVal, searchVal) {
@@ -154,11 +154,6 @@ export default function Home() {
     const file = e.target.files?.[0];
     if (file) handleImageSelected(file);
     e.target.value = '';
-  }
-
-  function clearPreview() {
-    if (preview) URL.revokeObjectURL(preview);
-    setPreview(null);
   }
 
   const isActive = employee?.status?.toLowerCase().includes('active');
@@ -212,11 +207,10 @@ export default function Home() {
             className={styles.scanHidden}
           />
 
-          {preview && (
-            <div className={styles.previewWrap}>
-              <img src={preview} alt="Scanned document" className={styles.previewImage} />
-              <span className={styles.previewInfo}>Document uploaded</span>
-              <button className={styles.previewClear} onClick={clearPreview}>✕</button>
+          {scanned && (
+            <div className={styles.scannedBadge}>
+              <span>✅</span>
+              <span>Document scanned — image discarded</span>
             </div>
           )}
         </div>
