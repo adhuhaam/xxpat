@@ -1,6 +1,5 @@
 import './globals.css';
 import ServiceWorkerRegister from './sw-register';
-import InstallPrompt from './install-prompt';
 
 export const metadata = {
   title: 'XPAT Verify',
@@ -18,7 +17,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#1e40af',
+  themeColor: '#f8f8fa',
 }
 
 export default function RootLayout({ children }) {
@@ -29,7 +28,6 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <ServiceWorkerRegister />
-        <InstallPrompt />
         {children}
       </body>
     </html>
