@@ -10,7 +10,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [employee, setEmployee] = useState(null);
   const [error, setError] = useState('');
-
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const [scanned, setScanned] = useState(false);
@@ -18,11 +17,11 @@ export default function Home() {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
-  async function fetchEmployee(wpVal, searchVal) {
-    const wpNum = wpVal || wp;
-    const searchStr = searchVal || search;
+  async function verify(wpVal, searchVal) {
+    const w = (wpVal || wp).trim();
+    const s = (searchVal || search).trim();
 
-    if (!wpNum.trim() || !searchStr.trim()) {
+    if (!w || !s) {
       setError('Please fill in both fields');
       return;
     }
@@ -32,21 +31,20 @@ export default function Home() {
     setEmployee(null);
 
     try {
-      const response = await fetch('/api/fetch', {
+      const res = await fetch('/api/fetch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wp: wpNum, search: searchStr })
+        body: JSON.stringify({ wp: w, search: s })
       });
-
-      const data = await response.json();
+      const data = await res.json();
 
       if (!data.success) {
         setError(data.message);
       } else {
         setEmployee(data.employee);
       }
-    } catch (err) {
-      setError('Failed to fetch employee. Please try again.');
+    } catch {
+      setError('Connection failed. Please try again.');
     }
 
     setLoading(false);
@@ -76,12 +74,9 @@ export default function Home() {
 
       const wpMatch = text.match(/WP\s*[-:]?\s*(\d{5,})/i)
         || text.match(/(WP\d{5,})/i);
-
       let extractedWp = '';
       if (wpMatch) {
-        extractedWp = wpMatch[1].startsWith('WP')
-          ? wpMatch[1]
-          : 'WP' + wpMatch[1];
+        extractedWp = wpMatch[1].startsWith('WP') ? wpMatch[1] : 'WP' + wpMatch[1];
       }
 
       const passportMatch = text.match(/(?:passport|pp)\s*(?:no\.?|number|#)?\s*[-:]?\s*([A-Z]\d{6,9})/i)
@@ -91,32 +86,30 @@ export default function Home() {
       let extractedName = '';
       if (!extractedPassport) {
         const nameMatch = text.match(/(?:name|employee)\s*[-:]?\s*([A-Za-z\s]{3,40})/i);
-        if (nameMatch) {
-          extractedName = nameMatch[1].trim();
-        }
+        if (nameMatch) extractedName = nameMatch[1].trim();
       }
 
-      if (extractedWp) {
-        setWp(extractedWp);
-      }
-
+      if (extractedWp) setWp(extractedWp);
       const searchVal = extractedPassport || extractedName;
-      if (searchVal) {
-        setSearch(searchVal);
-      }
+      if (searchVal) setSearch(searchVal);
 
       if (extractedWp && searchVal) {
-        await fetchEmployeeDirect(extractedWp, searchVal);
-      } else if (!extractedWp && !searchVal) {
-        setError('Could not find work permit or passport details in the image. Please enter manually.');
-      } else if (!extractedWp) {
-        setError('Found some text but couldn\'t detect a work permit number (WP...). Please enter it manually.');
-      } else {
-        setError('Found work permit but couldn\'t detect a name or passport number. Please enter it manually.');
+        setScanning(false);
+        setScanProgress(0);
+        setScanned(true);
+        await verify(extractedWp, searchVal);
+        return;
       }
 
-    } catch (err) {
-      setError('Failed to scan image. Please try again or enter details manually.');
+      if (!extractedWp && !searchVal) {
+        setError('Couldn\'t read the document. Please enter details manually.');
+      } else if (!extractedWp) {
+        setError('Couldn\'t find a work permit number. Please enter it manually.');
+      } else {
+        setError('Couldn\'t find a name or passport. Please enter it manually.');
+      }
+    } catch {
+      setError('Scan failed. Please try again or enter details manually.');
     }
 
     setScanning(false);
@@ -124,143 +117,94 @@ export default function Home() {
     setScanned(true);
   }, []);
 
-  async function fetchEmployeeDirect(wpVal, searchVal) {
-    setLoading(true);
-    setError('');
-    setEmployee(null);
-
-    try {
-      const response = await fetch('/api/fetch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wp: wpVal, search: searchVal })
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        setError(data.message);
-      } else {
-        setEmployee(data.employee);
-      }
-    } catch (err) {
-      setError('Failed to fetch employee. Please try again.');
-    }
-
-    setLoading(false);
-  }
-
   function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (file) handleImageSelected(file);
     e.target.value = '';
   }
 
-  const isActive = employee?.status?.toLowerCase().includes('active');
+  const statusClass = employee?.isValid === true
+    ? styles.statusBarValid
+    : employee?.isValid === false
+      ? styles.statusBarExpired
+      : styles.statusBarUnknown;
+
+  const validClass = employee?.isValid === true
+    ? styles.detailValueValid
+    : employee?.isValid === false
+      ? styles.detailValueExpired
+      : styles.detailValue;
 
   return (
     <div className={styles.app}>
 
-      <header className={styles.topBar}>
-        <div className={styles.appIcon}>🔍</div>
-        <div className={styles.topBarText}>
-          <span className={styles.topBarTitle}>XPAT Verify</span>
-          <span className={styles.topBarSub}>Work Permit Verification</span>
-        </div>
-      </header>
+      <nav className={styles.navBar}>
+        <div className={styles.navTitle}>Verify</div>
+        <div className={styles.navSubtitle}>Work Permit Verification</div>
+      </nav>
 
       <main className={styles.content}>
 
-        {/* OCR Scan Card */}
-        <div className={styles.scanCard}>
-          <span className={styles.scanLabel}>Scan Document</span>
-          <div className={styles.scanActions}>
-            <button
-              className={styles.scanBtn}
-              onClick={() => cameraInputRef.current?.click()}
-            >
-              <span className={styles.scanBtnIcon}>📷</span>
-              Take Photo
+        {/* Scan + Form Card */}
+        <div className={styles.sectionLabel}>Lookup</div>
+        <div className={styles.card}>
+
+          <div className={styles.scanRow}>
+            <button className={styles.scanBtn} onClick={() => cameraInputRef.current?.click()}>
+              <span className={styles.scanIcon}>📷</span>
+              Camera
             </button>
-            <button
-              className={styles.scanBtn}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <span className={styles.scanBtnIcon}>📁</span>
-              Upload
+            <button className={styles.scanBtn} onClick={() => fileInputRef.current?.click()}>
+              <span className={styles.scanIcon}>🖼️</span>
+              Photo Library
             </button>
           </div>
 
-          <input
-            ref={cameraInputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleFileChange}
-            className={styles.scanHidden}
-          />
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className={styles.scanHidden}
-          />
+          <input ref={cameraInputRef} type="file" accept="image/*" capture="environment"
+            onChange={handleFileChange} className={styles.scanHidden} />
+          <input ref={fileInputRef} type="file" accept="image/*"
+            onChange={handleFileChange} className={styles.scanHidden} />
 
           {scanned && (
             <div className={styles.scannedBadge}>
-              <span>✅</span>
-              <span>Document scanned — image discarded</span>
+              <span>✓</span> Document scanned
             </div>
           )}
-        </div>
-
-        {/* Divider */}
-        <div className={styles.divider}>
-          <span className={styles.dividerLine} />
-          <span>or enter manually</span>
-          <span className={styles.dividerLine} />
-        </div>
-
-        {/* Manual Search Card */}
-        <div className={styles.searchCard}>
 
           <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Work Permit Number</label>
-              <input
-                type="text"
-                placeholder="e.g. WP00012345"
-                value={wp}
-                onChange={(e) => setWp(e.target.value)}
-                className={styles.input}
-                autoComplete="off"
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Name or Passport</label>
-              <input
-                type="text"
-                placeholder="e.g. Ahmed / A1234567"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className={styles.input}
-                autoComplete="off"
-              />
-            </div>
+            <span className={styles.formLabel}>Permit</span>
+            <input
+              type="text"
+              placeholder="WP00000000"
+              value={wp}
+              onChange={(e) => setWp(e.target.value)}
+              className={styles.formInput}
+              autoComplete="off"
+            />
           </div>
 
-          <button
-            onClick={() => fetchEmployee()}
-            className={styles.button}
-            disabled={loading}
-          >
-            {loading && <span className={styles.spinner} />}
-            {loading ? 'Verifying...' : 'Verify Work Permit'}
-          </button>
+          <div className={styles.formRow}>
+            <span className={styles.formLabel}>Name</span>
+            <input
+              type="text"
+              placeholder="Name or Passport"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className={styles.formInput}
+              autoComplete="off"
+            />
+          </div>
 
         </div>
+
+        <button
+          onClick={() => verify()}
+          className={styles.button}
+          disabled={loading}
+        >
+          {loading && <span className={styles.spinner} />}
+          {loading ? 'Verifying…' : 'Verify'}
+        </button>
 
         {/* Error */}
         {error && (
@@ -272,64 +216,70 @@ export default function Home() {
 
         {/* Result */}
         {employee && (
-          <div className={styles.resultCard}>
+          <>
+            <div className={styles.sectionLabel}>Result</div>
+            <div className={styles.resultCard}>
 
-            <div className={`${styles.statusBanner} ${isActive ? styles.statusActive : styles.statusOther}`}>
-              <span className={styles.statusText}>{employee.status}</span>
-              <span className={styles.statusDot} />
-            </div>
-
-            <div className={styles.profileSection}>
-              <img
-                src={employee.image}
-                alt={employee.name}
-                className={styles.profileImage}
-              />
-              <div className={styles.profileInfo}>
-                <h2 className={styles.profileName}>
-                  {employee.name}
-                  <span className={styles.verifiedBadge}>✓</span>
-                </h2>
-                <div className={styles.profileOccupation}>{employee.occupation}</div>
-                <div className={styles.profileEmployer}>{employee.employer}</div>
+              <div className={`${styles.statusBar} ${statusClass}`}>
+                <span className={styles.statusText}>{employee.status}</span>
+                <span className={styles.statusDot} />
               </div>
-            </div>
 
-            <div className={styles.detailsList}>
-              <div className={styles.detailItem}>
-                <span className={styles.detailLabel}>Passport No.</span>
+              <div className={styles.profileHeader}>
+                <img src={employee.image} alt={employee.name} className={styles.profileImage} />
+                <div className={styles.profileInfo}>
+                  <h2 className={styles.profileName}>
+                    {employee.name}
+                    <span className={styles.verifiedIcon}>✓</span>
+                  </h2>
+                  <div className={styles.profileOccupation}>{employee.occupation}</div>
+                  <div className={styles.profileEmployer}>{employee.employer}</div>
+                </div>
+              </div>
+
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Passport</span>
                 <span className={styles.detailValue}>{employee.passport}</span>
               </div>
-              <div className={styles.detailItem}>
+
+              <div className={styles.detailRow}>
                 <span className={styles.detailLabel}>Work Permit</span>
                 <span className={styles.detailValue}>{employee.wp}</span>
               </div>
-              <div className={styles.detailItem}>
-                <span className={styles.detailLabel}>Issued On</span>
+
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Issued</span>
                 <span className={styles.detailValue}>{employee.issuedOn}</span>
               </div>
-              <div className={styles.detailItem}>
-                <span className={styles.detailLabel}>Valid Till</span>
-                <span className={styles.detailValueGreen}>{employee.validTill}</span>
-              </div>
-              <div className={styles.detailItem}>
-                <span className={styles.detailLabel}>Work Site</span>
-                <span className={styles.detailValue}>{employee.workSite}</span>
-              </div>
-            </div>
 
-          </div>
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Valid Till</span>
+                <span className={validClass}>{employee.validTill}</span>
+              </div>
+
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Work Site</span>
+                <span className={styles.detailValue}>
+                  {employee.workSite}
+                  {employee.workSiteCode && (
+                    <span className={styles.siteCode}>{employee.workSiteCode}</span>
+                  )}
+                </span>
+              </div>
+
+            </div>
+          </>
         )}
 
       </main>
 
-      {/* OCR Processing Overlay */}
+      {/* OCR Overlay */}
       {scanning && (
         <div className={styles.ocrOverlay}>
           <div className={styles.ocrModal}>
             <div className={styles.ocrSpinner} />
-            <div className={styles.ocrTitle}>Scanning Document</div>
-            <div className={styles.ocrSubtitle}>Extracting text from image...</div>
+            <div className={styles.ocrTitle}>Scanning</div>
+            <div className={styles.ocrSubtitle}>Reading document…</div>
             <div className={styles.ocrProgress}>
               <div className={styles.ocrProgressBar} style={{ width: `${scanProgress}%` }} />
             </div>

@@ -1,152 +1,189 @@
-/* ===== APP SHELL ===== */
+/* ===== iOS-NATIVE APP SHELL ===== */
 .app {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: #f2f4f7;
+  background: #f2f2f7;
 }
 
-/* Top bar */
-.topBar {
-  background: linear-gradient(135deg, #1e40af, #3b82f6);
-  padding: 16px 20px;
-  padding-top: max(16px, env(safe-area-inset-top));
-  display: flex;
-  align-items: center;
-  gap: 12px;
+/* iOS-style large title nav bar */
+.navBar {
+  background: rgba(248, 248, 250, 0.85);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  padding: 12px 20px 14px;
+  padding-top: max(12px, env(safe-area-inset-top));
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 12px rgba(30, 64, 175, 0.3);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
 }
 
-.appIcon {
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.topBarText {
-  display: flex;
-  flex-direction: column;
-}
-
-.topBarTitle {
-  color: #fff;
-  font-size: 17px;
+.navTitle {
+  font-size: 34px;
   font-weight: 700;
-  letter-spacing: -0.2px;
-  line-height: 1.2;
+  color: #000;
+  letter-spacing: 0.4px;
+  line-height: 1.1;
 }
 
-.topBarSub {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  font-weight: 500;
+.navSubtitle {
+  font-size: 13px;
+  color: #8e8e93;
+  margin-top: 2px;
 }
 
-/* Content area */
+/* Scrollable content */
 .content {
   flex: 1;
-  padding: 20px 16px;
-  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  padding: 16px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
   max-width: 600px;
   width: 100%;
   margin: 0 auto;
 }
 
-/* ===== SEARCH CARD ===== */
-.searchCard {
-  background: #fff;
-  border-radius: 16px;
-  padding: 24px 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
-  margin-bottom: 16px;
-}
-
-.formGroup {
-  margin-bottom: 18px;
-}
-
-.formGroup:last-of-type {
-  margin-bottom: 0;
-}
-
-.label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
+/* iOS section label */
+.sectionLabel {
   font-size: 13px;
-  color: #6b7280;
+  font-weight: 600;
+  color: #6e6e73;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
+  padding: 0 4px;
+  margin-bottom: 8px;
 }
 
-.input {
-  display: block;
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 16px;
-  color: #1f2937;
-  background: #f9fafb;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+/* ===== iOS GROUPED CARD ===== */
+.card {
   background: #fff;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
 }
 
-.input::placeholder {
-  color: #9ca3af;
+/* ===== SCAN SECTION ===== */
+.scanRow {
+  display: flex;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
 }
 
+.scanBtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+  color: #007aff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.scanBtn:first-child {
+  border-right: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.scanBtn:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.scanIcon {
+  font-size: 24px;
+}
+
+.scanHidden {
+  display: none;
+}
+
+.scannedBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #34c759;
+  font-weight: 500;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ===== FORM ROWS (iOS settings style) ===== */
+.formRow {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+  gap: 12px;
+}
+
+.formRow:last-child {
+  border-bottom: none;
+}
+
+.formLabel {
+  font-size: 15px;
+  color: #000;
+  white-space: nowrap;
+  width: 58px;
+  flex-shrink: 0;
+  font-weight: 400;
+}
+
+.formInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: #000;
+  background: none;
+  text-align: right;
+  padding: 0;
+  min-width: 0;
+  -webkit-appearance: none;
+}
+
+.formInput::placeholder {
+  color: #c7c7cc;
+}
+
+/* iOS primary button */
 .button {
   display: block;
-  width: 100%;
-  padding: 16px;
-  margin-top: 24px;
-  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  width: calc(100% - 32px);
+  margin: 16px auto;
+  padding: 15px;
+  background: #007aff;
   color: #fff;
   border: none;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 700;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
   -webkit-tap-highlight-color: transparent;
-  letter-spacing: 0.3px;
+  transition: opacity 0.15s;
+  letter-spacing: -0.2px;
 }
 
 .button:active {
-  transform: scale(0.98);
+  opacity: 0.7;
 }
 
 .button:disabled {
-  opacity: 0.65;
+  opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
-/* Loading spinner */
 .spinner {
   display: inline-block;
-  width: 18px;
-  height: 18px;
-  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
@@ -158,19 +195,18 @@
   to { transform: rotate(360deg); }
 }
 
-/* ===== ERROR ===== */
+/* ===== ERROR (iOS alert style) ===== */
 .error {
-  background: #fef2f2;
-  color: #dc2626;
-  padding: 14px 16px;
+  background: #fff;
   border-radius: 12px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  font-weight: 500;
-  border: 1px solid #fecaca;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  color: #ff3b30;
+  font-weight: 400;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .errorIcon {
@@ -181,16 +217,16 @@
 /* ===== RESULT CARD ===== */
 .resultCard {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
-  animation: slideUp 0.35s ease;
+  margin-bottom: 20px;
+  animation: fadeUp 0.35s ease;
 }
 
-@keyframes slideUp {
+@keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -198,59 +234,63 @@
   }
 }
 
-/* Status banner at top of result */
-.statusBanner {
-  padding: 10px 20px;
+/* Status pill at top */
+.statusBar {
+  padding: 8px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.statusActive {
-  background: linear-gradient(135deg, #059669, #10b981);
+.statusBarValid {
+  background: #34c759;
 }
 
-.statusOther {
-  background: linear-gradient(135deg, #d97706, #f59e0b);
+.statusBarExpired {
+  background: #ff3b30;
+}
+
+.statusBarUnknown {
+  background: #007aff;
 }
 
 .statusText {
   color: #fff;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
 
 .statusDot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.6);
-  animation: pulse 1.5s ease-in-out infinite;
+  background: rgba(255, 255, 255, 0.5);
+  animation: blink 2s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 0.6; }
+@keyframes blink {
+  0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
 
-/* Profile section */
-.profileSection {
-  padding: 24px 20px 20px;
+/* Profile header */
+.profileHeader {
+  padding: 20px 16px 16px;
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: flex-start;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
 }
 
 .profileImage {
-  width: 80px;
-  height: 100px;
-  border-radius: 12px;
+  width: 72px;
+  height: 90px;
+  border-radius: 10px;
   object-fit: cover;
-  border: 2px solid #e5e7eb;
   flex-shrink: 0;
-  background: #f3f4f6;
+  background: #f2f2f7;
 }
 
 .profileInfo {
@@ -261,267 +301,150 @@
 .profileName {
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a2e;
-  margin: 0 0 4px 0;
+  color: #000;
+  margin: 0 0 2px 0;
   line-height: 1.2;
   word-break: break-word;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
-.verifiedBadge {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #14b8a6, #0d9488);
-  color: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: bold;
-  flex-shrink: 0;
+.verifiedIcon {
+  color: #34c759;
+  font-size: 14px;
+  margin-left: 4px;
 }
 
 .profileOccupation {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 8px;
+  font-size: 13px;
+  color: #8e8e93;
+  margin-bottom: 4px;
 }
 
 .profileEmployer {
   font-size: 13px;
-  color: #3b82f6;
-  font-weight: 600;
+  color: #007aff;
+  font-weight: 500;
 }
 
-/* Details list */
-.detailsList {
-  padding: 0 20px 20px;
-}
-
-.detailItem {
+/* iOS-style detail list rows */
+.detailRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 0;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 13px 16px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+  min-height: 44px;
 }
 
-.detailItem:last-child {
+.detailRow:last-child {
   border-bottom: none;
 }
 
 .detailLabel {
-  font-size: 13px;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 15px;
+  color: #000;
 }
 
 .detailValue {
-  font-size: 14px;
-  color: #1f2937;
-  font-weight: 600;
+  font-size: 15px;
+  color: #8e8e93;
   text-align: right;
-  max-width: 60%;
+  max-width: 55%;
   word-break: break-word;
 }
 
-.detailValueGreen {
+.detailValueValid {
   composes: detailValue;
-  color: #059669;
-}
-
-/* ===== OCR SCAN ===== */
-.scanCard {
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
-  margin-bottom: 16px;
-}
-
-.scanLabel {
-  font-size: 13px;
+  color: #34c759;
   font-weight: 600;
-  color: #6b7280;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin-bottom: 14px;
-  display: block;
 }
 
-.scanActions {
-  display: flex;
-  gap: 10px;
-}
-
-.scanBtn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px 16px;
-  border: 2px dashed #d1d5db;
-  border-radius: 12px;
-  background: #f9fafb;
-  color: #374151;
-  font-size: 14px;
+.detailValueExpired {
+  composes: detailValue;
+  color: #ff3b30;
   font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  -webkit-tap-highlight-color: transparent;
 }
 
-.scanBtn:active {
-  background: #f3f4f6;
-  border-color: #3b82f6;
+/* Work site code */
+.siteCode {
+  font-size: 12px;
+  color: #8e8e93;
+  background: #f2f2f7;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: 500;
 }
 
-.scanBtnIcon {
-  font-size: 20px;
-}
-
-.scanHidden {
-  display: none;
-}
-
-/* OCR progress overlay */
+/* ===== OCR OVERLAY ===== */
 .ocrOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 200;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .ocrModal {
-  background: #fff;
-  border-radius: 20px;
-  padding: 32px 28px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 14px;
+  padding: 28px 24px;
   text-align: center;
-  max-width: 300px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease;
+  max-width: 270px;
+  width: 85%;
 }
 
 .ocrSpinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #e5e7eb;
-  border-top-color: #3b82f6;
+  width: 36px;
+  height: 36px;
+  border: 3px solid #e5e5ea;
+  border-top-color: #007aff;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 16px;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 14px;
 }
 
 .ocrTitle {
   font-size: 17px;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin-bottom: 6px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 4px;
 }
 
 .ocrSubtitle {
   font-size: 13px;
-  color: #6b7280;
+  color: #8e8e93;
 }
 
 .ocrProgress {
-  margin-top: 16px;
+  margin-top: 14px;
   width: 100%;
-  height: 6px;
-  background: #e5e7eb;
-  border-radius: 3px;
+  height: 4px;
+  background: #e5e5ea;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .ocrProgressBar {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #1e40af);
-  border-radius: 3px;
+  background: #007aff;
+  border-radius: 2px;
   transition: width 0.3s ease;
 }
 
-/* Scanned confirmation badge */
-.scannedBadge {
-  margin-top: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f0fdf4;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #bbf7d0;
-  font-size: 13px;
-  color: #15803d;
-  font-weight: 500;
-}
-
-/* Divider */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  color: #9ca3af;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.dividerLine {
-  flex: 1;
-  height: 1px;
-  background: #e5e7eb;
-}
-
-/* ===== DESKTOP: 768px+ ===== */
+/* ===== DESKTOP ===== */
 @media (min-width: 768px) {
-  .topBar {
-    padding: 20px 32px;
-    justify-content: center;
+  .navBar {
+    text-align: center;
+    padding: 16px 32px 18px;
   }
 
   .content {
-    padding: 32px 24px;
-  }
-
-  .searchCard {
-    padding: 32px;
-  }
-
-  .formRow {
-    display: flex;
-    gap: 16px;
-  }
-
-  .formRow .formGroup {
-    flex: 1;
-  }
-
-  .profileSection {
-    padding: 28px 32px 24px;
-  }
-
-  .profileImage {
-    width: 100px;
-    height: 125px;
-  }
-
-  .profileName {
-    font-size: 24px;
-  }
-
-  .detailsList {
-    padding: 0 32px 28px;
+    padding: 24px;
   }
 }

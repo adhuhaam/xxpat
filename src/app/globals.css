@@ -11,16 +11,15 @@ html {
 
 body {
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI',
-    Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', system-ui,
+    BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f2f4f7;
-  color: #1a1a2e;
+  background: #f2f2f7;
+  color: #000;
   overflow-x: hidden;
 }
 
-input, button, textarea {
+input, button, textarea, select {
   font-family: inherit;
-  font-size: inherit;
 }
