@@ -215,6 +215,7 @@ export default function Home() {
           {preview && (
             <div className={styles.previewWrap}>
               <img src={preview} alt="Scanned document" className={styles.previewImage} />
+              <span className={styles.previewInfo}>Document uploaded</span>
               <button className={styles.previewClear} onClick={clearPreview}>✕</button>
             </div>
           )}
